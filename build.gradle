@@ -6,7 +6,7 @@ plugins {
 
 group = 'pw.inz'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '17'
+sourceCompatibility = '15'
 
 repositories {
     mavenCentral()
@@ -19,6 +19,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation  'org.springframework.boot:spring-boot-starter-webflux'
 }
 
 tasks.named('test') {

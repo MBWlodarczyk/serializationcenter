@@ -2,56 +2,60 @@
 <html>
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="">
-  <title>PayloadEditor</title>
-  <!-- Bootstrap core CSS -->
-  <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Custom styles for this template -->
-  <link href="../cover.css" rel="stylesheet">
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <meta content="" name="description">
+    <title>PayloadEditor</title>
+    <!-- Bootstrap core CSS -->
+    <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="../cover.css" rel="stylesheet">
 </head>
 
 <body class="d-flex h-100 text-center text-white bg-dark">
-  <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
     <header class="mb-auto">
-      <div>
-        <h3 class="float-md-start mb-0"></h3>
-        <nav class="nav nav-masthead justify-content-center float-md-end"> <a class="nav-link" aria-current="page" href="/index.html">Home</a>
-          <a class="nav-link" href="/webscanner.html">WebScanner</a>
-          <a class="nav-link" href="/payloadgenerator.html">PayloadGenerator</a> <a class="nav-link active" href="#">PayloadEditor</a>
-          <a class="nav-link" href="/codescanner.html">CodeScanner</a>
-          <a class="nav-link" href="/classprobe.html">ClassProbe</a>
-        </nav>
-      </div>
+        <div>
+            <h3 class="float-md-start mb-0"></h3>
+            <nav class="nav nav-masthead justify-content-center float-md-end"><a aria-current="page" class="nav-link"
+                                                                                 href="/index.html">Home</a>
+                <a class="nav-link" href="/webscanner.html">WebScanner</a>
+                <a class="nav-link" href="/payloadgenerator.html">PayloadGenerator</a> <a class="nav-link active"
+                                                                                          href="#">PayloadEditor</a>
+                <a class="nav-link" href="/codescanner.html">CodeScanner</a>
+                <a class="nav-link" href="/classprobe.html">ClassProbe</a>
+            </nav>
+        </div>
     </header>
     <h1>PayloadEditor</h1>
     <form action="/payloadeditor.html" method="post">
-      <div class="mb-3">
-        <label for="formInput6" class="form-label">Enter your payload below</label>
-        <textarea name="payload" class="form-control" id="formInput6" placeholder="Enter serialized object in hex format..." rows="10"></textarea>
-      </div>
-      <main class="px-3">
-      </main>
-      <div class="btn-group" role="group" aria-label="Basic example">
-      </div>
-      <div>
-        <button id="print" type="submit" class="btn btn-light float-none">Pretty Print</button>
-          <a id="download" class="btn btn-light float-none" href="payloadeditor/download" style="visibility: hidden">Download<br></a>
-      </div>
-      <div>
-      </div>
+        <div class="mb-3">
+            <label class="form-label" for="formInput6">Enter your payload below</label>
+            <textarea class="form-control" id="formInput6" name="payload"
+                      placeholder="Enter serialized object in hex format..." rows="10"></textarea>
+        </div>
+        <main class="px-3">
+        </main>
+        <div aria-label="Basic example" class="btn-group" role="group">
+        </div>
+        <div>
+            <button class="btn btn-light float-none" id="print" type="submit">Pretty Print</button>
+            <a class="btn btn-light float-none" href="payloadeditor/download" id="download" style="visibility: hidden">Download<br></a>
+        </div>
+        <div>
+        </div>
     </form>
     <div>
-      <div id="deserString" style="white-space: pre;text-align: left" th:utext="${desString}"></div>
+        <div id="deserString" style="white-space: pre;text-align: left" th:utext="${desString}"></div>
     </div>
     <footer class="mt-auto text-white-50">
-      <p>Cover template for <a href="#" class="text-white">Bootstrap</a>, by <a href="#" class="text-white">@mdo</a>.</p>
+        <p>Cover template for <a class="text-white" href="#">Bootstrap</a>, by <a class="text-white" href="#">@mdo</a>.
+        </p>
     </footer>
-  </div>
-  <script src="js/PayloadEditor.js"></script>
-  <script src="../assets/js/popper.min.js"></script>
-  <script src="../bootstrap/js/bootstrap.min.js"></script>
+</div>
+<script src="js/PayloadEditor.js"></script>
+<script src="../assets/js/popper.min.js"></script>
+<script src="../bootstrap/js/bootstrap.min.js"></script>
 </body>
 
 </html>
