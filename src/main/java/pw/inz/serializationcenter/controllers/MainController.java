@@ -23,7 +23,7 @@ public class MainController {
     @Value("${spring.application.name}")
     String appName;
     String desString;
-    String ysoserial;
+    String scanResult;
 
     @Autowired
     public MainController() {
@@ -49,8 +49,15 @@ AC ED 00 05 73 72 00 0A 53 65 72 69 61 6C 54 65
     @RequestMapping("/webscanner.html")
     public String webScanner(Model model) {
         model.addAttribute("appName", appName);
+        model.addAttribute("scanResult", scanResult);
+        return "WebScanner";
+    }
 
-        return "PayloadGenerator";
+    @PostMapping(path = "/webscanner/scan", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
+    public String  scanURL(@RequestParam String url)  {
+        scanResult= webScanner.doScan(url);
+        System.out.println(scanResult);
+        return "redirect:/webscanner.html";
     }
 
     @RequestMapping("/payloadgenerator.html")

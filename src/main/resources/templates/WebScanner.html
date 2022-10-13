@@ -29,53 +29,20 @@
     </header>
     <main class="px-3">
         <h1 style="">WebScanner</h1>
+        <p>This module is responsible for scanning pages with known payloads.
+            The page is being scanned by sending playload with sleep command and measuring the time it took.
+            Payloads are being send in many encodings.</p>
         <div class="row">
             <div class="col-md-12">
-                <form action="/payloadgenerator/generate" class="" method="post">
-                    <div class="form-group"><label>Payload Type</label></div>
-                    <div class="form-group">
-                        <select class="form-control" id="exampleFormControlSelect1" name="payloadname">
-                            <option>AspectJWeaver</option>
-                            <option>BeanShell1</option>
-                            <option>C3P0</option>
-                            <option>Click1</option>
-                            <option>Clojure</option>
-                            <option>CommonsBeanutils1</option>
-                            <option>CommonsCollections1</option>
-                            <option>CommonsCollections2</option>
-                            <option>CommonsCollections3</option>
-                            <option>CommonsCollections4</option>
-                            <option>CommonsCollections5</option>
-                            <option>CommonsCollections6</option>
-                            <option>CommonsCollections7</option>
-                            <option>FileUpload1</option>
-                            <option>Groovy1</option>
-                            <option>Hibernate1</option>
-                            <option>Hibernate2</option>
-                            <option>JBossInterceptors1</option>
-                            <option>JRMPClient</option>
-                            <option>JRMPListener</option>
-                            <option>JSON1</option>
-                            <option>JavassistWeld1</option>
-                            <option>Jdk7u21</option>
-                            <option>Jython1</option>
-                            <option>MozillaRhino1</option>
-                            <option>MozillaRhino2</option>
-                            <option>Myfaces1</option>
-                            <option>Myfaces2</option>
-                            <option>ROME</option>
-                            <option>Spring1</option>
-                            <option>Spring2</option>
-                            <option>URLDNS</option>
-                            <option>Vaadin1</option>
-                            <option>Wicket1</option>
-                        </select>
-                    </div>
-                    <div class="form-group"><label>Payload Command</label> <input class="form-control" name="payloadcmd"
-                                                                                  placeholder="sleep 3"></div>
+                <form action="/webscanner/scan" class="" method="post">
+                    <div class="form-group"><label>Enter url to scan below</label> <input class="form-control" name="url"
+                                                                                  placeholder="localhost:1111"></div>
                     <button class="btn btn-primary my-3" type="submit">Submit</button>
                 </form>
             </div>
+        </div>
+        <div>
+            <div id="scanResult" style="white-space: pre;text-align: left" th:utext="${scanResult}"></div>
         </div>
         <p class="lead"></p>
     </main>

@@ -1,15 +1,27 @@
 package pw.inz.serializationcenter.webscanner;
 
 
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientException;
 import pw.inz.serializationcenter.payloadgenerator.ysoserialPassThru;
 
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UncheckedIOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.rmi.ConnectException;
 import java.util.HashMap;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.GZIPOutputStream;
 
 @Component
 @Scope("singleton")
@@ -30,26 +42,52 @@ public class WebScanner {
     }
 
 
+
+    public long sendBytePost(byte[] payload, String url){
+        //bytes send
+        WebClient webClient = WebClient.builder()
+                .baseUrl(url)
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+
+                .build();
+        long start = System.nanoTime();
+        webClient.post()
+                .uri("")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(payload.length))
+                .bodyValue(payload)
+                .retrieve()
+                .bodyToMono(String.class)
+                .onErrorMap(IOException.class, UncheckedIOException::new)
+                .block();
+        long stop = System.nanoTime();
+        return stop-start;
+    }
+
+
+
     public String doScan(String url) {
         StringBuilder result = new StringBuilder();
         for (String payload : payloads) {
             if (payloadsData.get(payload) != null) {
-                WebClient webClient = WebClient.builder()
-                        .baseUrl(url)
-                        .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                        .build();
-                long start = System.nanoTime();
-                webClient.post()
-                        .uri("")
-                        .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                        .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(payloadsData.get(payload).length))
-                        .bodyValue(payloadsData.get(payload))
-                        .retrieve()
-                        .bodyToMono(String.class).block();
-                long stop = System.nanoTime();
-                System.out.println(stop - start);
-                if (stop - start < 1) {
-                    result.append("Application look vulnerable to payload " + payload + ".\r\n");
+                try {
+                   if(sendBytePost(payloadsData.get(payload),url)>1000000000){
+                       result.append("Seems vulnerable to ").append(payload).append(" using plain byte post");
+                   }
+                   if(sendBytePost(Base64.encodeBase64(payloadsData.get(payload)),url)>1000000000){
+                       result.append("Seems vulnerable to ").append(payload).append(" using base64 post");
+                   }
+                    if(sendBytePost(Base64.encodeBase64URLSafe(payloadsData.get(payload)),url)>1000000000){
+                        result.append("Seems vulnerable to ").append(payload).append(" using base64 urlsafe post");
+                    }
+                    if(sendBytePost(URLEncoder.encode(new String(payloadsData.get(payload), StandardCharsets.ISO_8859_1), StandardCharsets.ISO_8859_1).getBytes(),url)>1000000000){
+                        result.append("Seems vulnerable to ").append(payload).append(" using url encoding post");
+                    }
+
+
+                } catch (WebClientException | UncheckedIOException ex){
+                    result.append(ex.getCause().getLocalizedMessage());
+                    break;
                 }
             }
         }
