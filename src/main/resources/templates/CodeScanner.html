@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <meta content="" name="description">
+    <title>Cover Template · Bootstrap v5.0</title>
+    <!-- Bootstrap core CSS -->
+    <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="../cover.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="loading-bar.css"/>
+    <script type="text/javascript" src="loading-bar.js"></script>
+</head>
+
+<body class="d-flex h-100 text-center text-white bg-dark">
+<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+    <header class="mb-auto">
+        <div>
+            <h3 class="float-md-start mb-0"></h3>
+            <nav class="nav nav-masthead justify-content-center float-md-end">
+                <a aria-current="page" class="nav-link" href="/index.html">Home</a><a class="nav-link"
+                                                                                   href="/webscanner.html">WebScanner</a><a
+                    class="nav-link" href="/payloadgenerator.html">PayloadGenerator</a>
+                <a class="nav-link" href="/payloadeditor.html">PayloadEditor</a><a class="nav-link  active"
+                                                                                   href="/codescanner.html">CodeScanner</a><a
+                    class="nav-link" href="/codescanner.html">ClassProbe</a>
+            </nav>
+        </div>
+    </header>
+    <main class="px-3">
+        <h1 style="">CodeScanner</h1>
+        <p>This module is responsible for both jar and war files for possible gadget chains.</p>
+
+        <script th:inline="javascript">
+            var intervalID
+
+            function start(){
+                document.getElementById("myItem1").style.visibility="visible"
+                intervalID = setInterval(() => {fetch('/status')           //api for the get request
+                    .then(response => response.text()).then(data => document.getElementById('myItem1').ldBar.set(parseInt(data)))},1000)
+            }
+            function stop(){
+                clearInterval(intervalID);
+            }
+
+        </script>
+        <div class="row">
+            <div class="col-md-12">
+                <form method="POST" enctype="multipart/form-data" action="/codescanner/upload">
+                    <table style="margin: auto">
+                        <tr><td>File to upload:</td><td><input type="file" name="file" /></td></tr>
+                        <tr><td></td><td><input id="starter" type="submit" value="Upload" th:onclick="start()"/></td></tr>
+                    </table>
+                </form>
+            </div>
+            <div
+                    style="visibility: hidden;margin: auto;width: 50%; height: 7%"
+                    id="myItem1"
+                    class="ldBar label-center"
+                    data-preset="energy"
+            ></div>
+        </div>
+        <div>
+            <div id="gadgets" style="white-space: pre;text-align: left" th:utext="${gadgets}"></div>
+        </div>
+        <p class="lead"></p>
+    </main>
+    <footer class="mt-auto text-white-50">
+        <p>Cover template for <a class="text-white" href="#">Bootstrap</a>, by <a class="text-white" href="#">@mdo</a>.
+        </p>
+    </footer>
+</div>
+<script src="../assets/js/popper.min.js"></script>
+<script src="../bootstrap/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>

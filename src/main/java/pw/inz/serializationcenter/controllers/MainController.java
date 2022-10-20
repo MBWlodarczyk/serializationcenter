@@ -3,10 +3,15 @@ package pw.inz.serializationcenter.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import pw.inz.serializationcenter.codescanner.CodeScanner;
 import pw.inz.serializationcenter.payloadeditor.SerializationDumper;
 import pw.inz.serializationcenter.payloadgenerator.ysoserialPassThru;
 import pw.inz.serializationcenter.webscanner.WebScanner;
@@ -14,19 +19,26 @@ import pw.inz.serializationcenter.webscanner.WebScanner;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 @Controller
+@EnableAsync
 public class MainController {
     private final SerializationDumper sd;
     private final ysoserialPassThru ysoserialPass;
     private final WebScanner webScanner;
+    private final CodeScanner codeScanner;
+
     @Value("${spring.application.name}")
     String appName;
     String desString;
+
+    String gadgets;
     String scanResult;
 
     @Autowired
     public MainController() {
+        codeScanner = new CodeScanner();
         sd = new SerializationDumper();
         ysoserialPass = new ysoserialPassThru();
         webScanner = new WebScanner();
@@ -39,13 +51,39 @@ AC ED 00 05 73 72 00 0A 53 65 72 69 61 6C 54 65
 70 00 64
 */
 
+
+
     @RequestMapping("/index.html")
     public String homePage(Model model) {
         model.addAttribute("appName", appName);
-
         return "cover";
     }
 
+    @RequestMapping("/status")
+    @ResponseBody
+    public String getStatus(Model model) {
+        return String.valueOf(codeScanner.getProgress());
+    }
+
+
+    @PostMapping("/codescanner/upload")
+    public String handleFileUpload(@RequestParam("file") MultipartFile file,
+                                                      RedirectAttributes redirectAttributes) {
+
+        codeScanner.store(file);
+        codeScanner.invoke();
+        gadgets = codeScanner.readResult();
+        redirectAttributes.addFlashAttribute("message",
+                "You successfully uploaded " + file.getOriginalFilename() + "!");
+        return "redirect:/codescanner.html";
+    }
+
+    @RequestMapping("/codescanner.html")
+    public String codeScanner(Model model) {
+        model.addAttribute("appName", appName);
+        model.addAttribute("gadgets",gadgets);
+        return "CodeScanner";
+    }
     @RequestMapping("/webscanner.html")
     public String webScanner(Model model) {
         model.addAttribute("appName", appName);
