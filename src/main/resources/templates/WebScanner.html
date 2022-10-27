@@ -40,6 +40,11 @@
                 <form action="/webscanner/scan" class="" method="post">
                     <div class="form-group"><label>Enter url to scan below</label> <input class="form-control" name="url"
                                                                                   placeholder="localhost:1111"></div>
+                    <div class="mb-3">
+                        <label class="form-label" for="formInput6">Enter custom request format (this edits the body, if you want to send it as url encoded parameters please start with params[])</label>
+                        <textarea class="form-control" id="formInput6" name="request"
+                                  rows="10"></textarea>
+                    </div>
                     <button class="btn btn-primary my-3" type="submit">Submit</button>
                 </form>
             </div>

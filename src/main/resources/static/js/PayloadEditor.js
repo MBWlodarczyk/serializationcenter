@@ -11,7 +11,9 @@ function btn1_handler() {
 window.onload = function () {
     var desString = document.getElementById("deserString")
     var download = document.getElementById("download")
+    var form = document.getElementById("save_form")
     if (desString.innerHTML.startsWith("\nSTREAM_MAGIC")) {
         download.style.visibility = "visible"
+        form.style.visibility="visible"
     }
 }

@@ -20,6 +20,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation  'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'commons-codec:commons-codec:1.15'
 }
 
 tasks.named('test') {

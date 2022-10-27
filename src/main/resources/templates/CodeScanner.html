@@ -38,7 +38,7 @@
 
             function start(){
                 document.getElementById("myItem1").style.visibility="visible"
-                intervalID = setInterval(() => {fetch('/status')           //api for the get request
+                intervalID = setInterval(() => {fetch('/status')
                     .then(response => response.text()).then(data => document.getElementById('myItem1').ldBar.set(parseInt(data)))},1000)
             }
             function stop(){

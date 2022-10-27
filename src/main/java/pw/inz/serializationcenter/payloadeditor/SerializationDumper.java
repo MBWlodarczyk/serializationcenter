@@ -8,6 +8,7 @@ import pw.inz.serializationcenter.payloadeditor.support.ClassField;
 
 import java.io.*;
 import java.math.BigInteger;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -69,6 +70,56 @@ public class SerializationDumper {
         }
 
         return hex.replaceAll("([abcdef0-9]{2})", "$1 ").trim();
+    }
+
+    public void store(String name, String payload){
+        File directory = new File(System.getProperty("user.dir") + "\\libs\\payloads");
+        String inputLine;
+        ByteArrayOutputStream byteStream = null;
+        byte[] rebuiltStream;
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
+        try {
+            byteStream = new ByteArrayOutputStream();
+            Reader inputString = new StringReader(payload);
+            BufferedReader reader = new BufferedReader(inputString);
+            while ((inputLine = reader.readLine()) != null) {
+                if (!inputLine.trim().startsWith("newHandle ")) {
+                    if (inputLine.contains("0x")) {
+                        if (inputLine.trim().startsWith("Value - ")) {
+                            inputLine = inputLine.substring(inputLine.lastIndexOf("0x") + 2);
+                        } else {
+                            inputLine = inputLine.split("0x", 2)[1];
+                        }
+                        if (inputLine.contains(" - ")) {
+                            inputLine = inputLine.split("-", 2)[0];
+                        }
+                        inputLine = inputLine.replace(" ", "");
+                        byteStream.write(hexStrToBytes(inputLine));
+                    }
+                }
+            }
+            reader.close();
+        } catch (IOException fnfe) {
+            System.out.println(fnfe.getMessage());
+        }
+        rebuiltStream = byteStream.toByteArray();
+        for (byte b : rebuiltStream) {
+            this._rodata.add(b);
+            this._data.add(b);
+        }
+        File outputFile = new File(System.getProperty("user.dir") + "\\libs\\payloads\\"+name+"_payload");
+        try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
+            byte[] bytes = new byte[this._data.size()];
+            int j=0;
+            for(Byte b: this._data)
+                bytes[j++] = b.byteValue();
+            outputStream.write(bytes);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     public String changeValues(String desString, Map<String, String> values) {

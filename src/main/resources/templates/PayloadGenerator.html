@@ -37,40 +37,7 @@
                     <div class="form-group"><label>Payload Type</label></div>
                     <div class="form-group">
                         <select class="form-control" id="exampleFormControlSelect1" name="payloadname">
-                            <option>AspectJWeaver</option>
-                            <option>BeanShell1</option>
-                            <option>C3P0</option>
-                            <option>Click1</option>
-                            <option>Clojure</option>
-                            <option>CommonsBeanutils1</option>
-                            <option>CommonsCollections1</option>
-                            <option>CommonsCollections2</option>
-                            <option>CommonsCollections3</option>
-                            <option>CommonsCollections4</option>
-                            <option>CommonsCollections5</option>
-                            <option>CommonsCollections6</option>
-                            <option>CommonsCollections7</option>
-                            <option>FileUpload1</option>
-                            <option>Groovy1</option>
-                            <option>Hibernate1</option>
-                            <option>Hibernate2</option>
-                            <option>JBossInterceptors1</option>
-                            <option>JRMPClient</option>
-                            <option>JRMPListener</option>
-                            <option>JSON1</option>
-                            <option>JavassistWeld1</option>
-                            <option>Jdk7u21</option>
-                            <option>Jython1</option>
-                            <option>MozillaRhino1</option>
-                            <option>MozillaRhino2</option>
-                            <option>Myfaces1</option>
-                            <option>Myfaces2</option>
-                            <option>ROME</option>
-                            <option>Spring1</option>
-                            <option>Spring2</option>
-                            <option>URLDNS</option>
-                            <option>Vaadin1</option>
-                            <option>Wicket1</option>
+                            <option th:each="payload :${possible_payloads}" th:text ="${payload}"></option>
                         </select>
                     </div>
                     <div class="form-group"><label>Payload Command</label> <input class="form-control" name="payloadcmd"

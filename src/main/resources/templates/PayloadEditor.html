@@ -35,6 +35,7 @@
             <textarea class="form-control" id="formInput6" name="payload"
                       placeholder="Enter serialized object in hex format..." rows="10"></textarea>
         </div>
+
         <main class="px-3">
         </main>
         <div aria-label="Basic example" class="btn-group" role="group">
@@ -49,14 +50,27 @@
     <div>
         <div id="deserString" style="white-space: pre;text-align: left" th:utext="${desString}"></div>
     </div>
+    </form>
+    <form action="/payloadeditor/save"   id="form_save" style="visibility: hidden"  method="post">
+
+        <div aria-label="Basic example" class="btn-group" role="group">
+        </div>
+        <div class="form-group" ><label>Name</label> <input class="form-control" name="name"
+                                                                      placeholder="name"></div>
+        <div>
+            <button class="btn btn-light float-none" type="submit">Save</button>
+        </div>
+        <div>
+        </div>
+    </form>
     <footer class="mt-auto text-white-50">
         <p>Cover template for <a class="text-white" href="#">Bootstrap</a>, by <a class="text-white" href="#">@mdo</a>.
         </p>
     </footer>
 </div>
-<script src="js/PayloadEditor.js"></script>
-<script src="../assets/js/popper.min.js"></script>
-<script src="../bootstrap/js/bootstrap.min.js"></script>
+<script th:src="@{js/PayloadEditor.js}"></script>
+<script th:src="@{../assets/js/popper.min.js}"></script>
+<script th:src="@{../bootstrap/js/bootstrap.min.js}"></script>
 </body>
 
 </html>

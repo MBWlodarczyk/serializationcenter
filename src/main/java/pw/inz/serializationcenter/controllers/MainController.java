@@ -92,14 +92,15 @@ AC ED 00 05 73 72 00 0A 53 65 72 69 61 6C 54 65
     }
 
     @PostMapping(path = "/webscanner/scan", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
-    public String  scanURL(@RequestParam String url)  {
-        scanResult= webScanner.doScan(url);
+    public String  scanURL(@RequestParam String url,@RequestParam String request)  {
+        scanResult= webScanner.doScan(url,request);
         System.out.println(scanResult);
         return "redirect:/webscanner.html";
     }
 
     @RequestMapping("/payloadgenerator.html")
     public String payloadGenerator(Model model) {
+        model.addAttribute("possible_payloads",ysoserialPass.getPayloads());
         model.addAttribute("appName", appName);
         return "PayloadGenerator";
     }
@@ -124,9 +125,15 @@ AC ED 00 05 73 72 00 0A 53 65 72 69 61 6C 54 65
     @PostMapping(path = "/payloadeditor.html", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
     public String printPayload(@RequestParam String payload,
                                ModelMap model) throws Exception {
-        //SerializationDumper sd = new SerializationDumper();
         desString = sd.main(new String[]{payload});
         model.addAttribute("desString", desString);
+        return "redirect:/payloadeditor.html";
+    }
+
+    @PostMapping(path = "/payloadeditor/save", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
+    public String savePayload(@RequestParam String name,
+                               ModelMap model) throws Exception {
+        sd.store(name,desString);
         return "redirect:/payloadeditor.html";
     }
 
