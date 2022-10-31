@@ -179,7 +179,7 @@ public class WebScanner {
     public String doScan(String url,String request) {
         if(request.equals("")){ return doScanDefault(url);}
         else if(request.startsWith("params[")){return doScanParams(url,request);}
-        else {return "request";}
+        else {return doScanRequest(url,request);}
     }
 
     private String doScanParams(String url, String request) {
@@ -205,5 +205,46 @@ public class WebScanner {
         } else {
             return result.toString();
         }
+    }
+
+    private String doScanRequest(String url, String request) {
+        StringBuilder result = new StringBuilder();
+        for (String payload : payloadsSleep.keySet()) {
+            byte[] payload_data = payloadsSleep.get(payload);
+            if(sendPostRequest(payload_data,url,request)>9){
+                result.append("Seems vulnerable to ").append(payload).append(" using plain byte post\n");
+            }
+            if(sendPostRequest(Base64.encodeBase64(payload_data),url,request)>9){
+                result.append("Seems vulnerable to ").append(payload).append(" using base64 post\n");
+            }
+            if(sendPostRequest(Base64.encodeBase64URLSafe(payload_data),url,request)>9){
+                result.append("Seems vulnerable to ").append(payload).append(" using base64 urlsafe post\n");
+            }
+            if(sendPostRequest(URLEncoder.encode(new String(payload_data, StandardCharsets.ISO_8859_1), StandardCharsets.ISO_8859_1).getBytes(),url,request)>9){
+                result.append("Seems vulnerable to ").append(payload).append(" using url encoding post\n");
+            }
+
+        }
+        if (result.toString().equals("")) {
+            return "Application is not vulnerable to any payload";
+        } else {
+            return result.toString();
+        }
+    }
+
+    public void sendPayload(String url, String request, byte[] payload) {
+        if(request.equals("")){ sendBytePost(payload, url);
+            sendBytePost(Base64.encodeBase64(payload), url);
+            sendBytePost(Base64.encodeBase64URLSafe(payload), url);
+            sendBytePost(URLEncoder.encode(new String(payload, StandardCharsets.ISO_8859_1), StandardCharsets.ISO_8859_1).getBytes(), url);}
+        else if(request.startsWith("params[")){        sendPostParams(payload, url, request);
+            sendPostParams(Base64.encodeBase64(payload), url, request);
+            sendPostParams(Base64.encodeBase64URLSafe(payload), url, request);
+            sendPostParams(URLEncoder.encode(new String(payload, StandardCharsets.ISO_8859_1), StandardCharsets.ISO_8859_1).getBytes(), url, request);}
+        else {sendPostRequest(payload, url, request);
+            sendPostRequest(Base64.encodeBase64(payload), url, request);
+            sendPostRequest(Base64.encodeBase64URLSafe(payload), url, request);
+            sendPostRequest(URLEncoder.encode(new String(payload, StandardCharsets.ISO_8859_1), StandardCharsets.ISO_8859_1).getBytes(), url, request);}
+
     }
 }

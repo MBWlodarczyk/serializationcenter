@@ -284,7 +284,7 @@ public class SerializationDumper {
      * @param h The hex-ascii string to convert to bytes.
      * @return A byte array containing the values from the hex-ascii string.
      ******************/
-    private byte[] hexStrToBytes(String h) {
+    public byte[] hexStrToBytes(String h) {
         byte[] outBytes = new byte[h.length() / 2];
         for (int i = 0; i < outBytes.length; ++i) {
             outBytes[i] = (byte) ((Character.digit(h.charAt(i * 2), 16) << 4) + Character.digit(h.charAt((i * 2) + 1), 16));
@@ -318,7 +318,6 @@ public class SerializationDumper {
         this._handleValue++;
         return handleValue;
     }
-
 
     /*******************
      * Parse output from parseStream() and turn it back into a binary

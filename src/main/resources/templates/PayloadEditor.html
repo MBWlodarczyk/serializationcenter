@@ -33,7 +33,7 @@
         <div class="mb-3">
             <label class="form-label" for="formInput6">Enter your payload below</label>
             <textarea class="form-control" id="formInput6" name="payload"
-                      placeholder="Enter serialized object in hex format..." rows="10"></textarea>
+                      th:placeholder="Enter serialized object in hex format..." rows="10"></textarea>
         </div>
 
         <main class="px-3">
@@ -41,8 +41,9 @@
         <div aria-label="Basic example" class="btn-group" role="group">
         </div>
         <div>
-            <button class="btn btn-light float-none" id="print" type="submit">Pretty Print</button>
-            <a class="btn btn-light float-none" href="payloadeditor/download" id="download" style="visibility: hidden">Download<br></a>
+            <button class="btn btn-primary my-3" id="print" type="submit" name="action" value="print">Pretty Print</button>
+            <a class="btn btn-primary my-3" href="payloadeditor/download" id="download" style="visibility: hidden">Download<br></a>
+            <button class="btn btn-primary my-3" type="submit" value="send" name="action" id="send" style="visibility: hidden">Send to webScanner<br></button>
         </div>
         <div>
         </div>
