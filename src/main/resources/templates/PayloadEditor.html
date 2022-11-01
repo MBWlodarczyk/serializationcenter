@@ -33,7 +33,7 @@
         <div class="mb-3">
             <label class="form-label" for="formInput6">Enter your payload below</label>
             <textarea class="form-control" id="formInput6" name="payload"
-                      th:placeholder="Enter serialized object in hex format..." rows="10"></textarea>
+                       rows="10"  th:text="${StringPayload}"></textarea>
         </div>
 
         <main class="px-3">

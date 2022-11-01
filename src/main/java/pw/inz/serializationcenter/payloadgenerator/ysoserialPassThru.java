@@ -91,6 +91,7 @@ public class ysoserialPassThru {
                 throw new RuntimeException(e);
             }
         }
+        this.load();
         if(payloads_own.containsKey(payloadname)){
             return payloads_own.get(payloadname);
         }

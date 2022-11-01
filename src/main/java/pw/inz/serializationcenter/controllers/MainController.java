@@ -34,6 +34,7 @@ public class MainController {
     byte[] payload;
     String gadgets;
     String scanResult;
+    String StringPayload;
 
     @Autowired
     public MainController() {
@@ -130,6 +131,11 @@ AC ED 00 05 73 72 00 0A 53 65 72 69 61 6C 54 65
         else if(action.equals("send")){
             payload = ysoserialPass.invoke(payloadname, payloadcmd);
             return  "redirect:/webscanner/send";
+        }else if (action.equals("edit")){
+            payload = ysoserialPass.invoke(payloadname, payloadcmd);
+            StringPayload = sd.bytesToHex(payload);
+            desString = sd.main(new String[] {StringPayload});
+            return "redirect:/payloadeditor.html";
         }
 
         return  null;
@@ -139,6 +145,7 @@ AC ED 00 05 73 72 00 0A 53 65 72 69 61 6C 54 65
     public String payloadEditor(Model model) {
         model.addAttribute("appName", appName);
         model.addAttribute("desString", desString);
+        model.addAttribute("StringPayload", StringPayload);
         return "PayloadEditor";
     }
 
@@ -146,10 +153,12 @@ AC ED 00 05 73 72 00 0A 53 65 72 69 61 6C 54 65
     public String printPayload(@RequestParam String payload,@RequestParam String action,
                                ModelMap model) throws Exception {
         if(action.equals("print")) {
+            StringPayload = payload;
             desString = sd.main(new String[]{payload});
             model.addAttribute("desString", desString);
             return "redirect:/payloadeditor.html";
         } else if (action.equals("send")){
+            StringPayload = payload;
             this.payload = sd.hexStrToBytes(payload.replaceAll("[\s\r\n]", "").toUpperCase());
             return "redirect:/webscanner.html";
         }
