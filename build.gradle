@@ -21,6 +21,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation  'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'commons-codec:commons-codec:1.15'
+    implementation files('libs/GadgetProbe-1.0-SNAPSHOT-all.jar')
 }
 
 tasks.named('test') {
