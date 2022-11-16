@@ -33,6 +33,16 @@ import java.util.zip.GZIPOutputStream;
 @Scope("singleton")
 public class WebScanner {
 
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    private int status;
+
 
     HashMap<String,byte[]> payloadsSleep;
     private final String[] payloads = new String[]{"BeanShell1", "Click1", "Clojure", "CommonsBeanutils1", "CommonsCollections1", "CommonsCollections2", "CommonsCollections3", "CommonsCollections4","CommonsCollections6", "CommonsCollections7", "Hibernate1", "Hibernate2", "JBossInterceptors1", "JRMPClient",  "JavassistWeld1", "Jdk7u21", "MozillaRhino2", "Myfaces1",  "ROME", "Spring1", "Spring2"};//todo from databse
@@ -66,7 +76,16 @@ public class WebScanner {
 
     }
 
-
+    private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
+    public static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = HEX_ARRAY[v >>> 4];
+            hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
 
     public double sendBytePost(byte[] payload, String url){
         //bytes send
@@ -92,6 +111,7 @@ public class WebScanner {
         return send(url,payloadFinal,false);
     }
     public double send(String url,byte[] payload,boolean json){
+        setStatus(status+1);
         WebClient webClient;
         if(json) {
             webClient = WebClient.builder()
@@ -168,6 +188,9 @@ public class WebScanner {
             if(sendBytePost(URLEncoder.encode(new String(payload_data, StandardCharsets.ISO_8859_1), StandardCharsets.ISO_8859_1).getBytes(),url)>9){
                 result.append("Seems vulnerable to ").append(payload).append(" using url encoding post\n");
             }
+            if(sendBytePost(bytesToHex(payload_data).getBytes(),url)>9){
+                result.append("Seems vulnerable to ").append(payload).append(" using hex post\n");
+            }
 
         }
         if (result.toString().equals("")) {
@@ -177,6 +200,7 @@ public class WebScanner {
         }
     }
     public String doScan(String url,String request) {
+        status = 0;
         if(request.equals("")){ return doScanDefault(url);}
         else if(request.startsWith("params[")){return doScanParams(url,request);}
         else {return doScanRequest(url,request);}

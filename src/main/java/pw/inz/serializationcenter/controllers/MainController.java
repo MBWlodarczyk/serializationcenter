@@ -10,6 +10,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import pw.inz.serializationcenter.classprobe.ClassProbe;
 import pw.inz.serializationcenter.codescanner.CodeScanner;
 import pw.inz.serializationcenter.payloadeditor.SerializationDumper;
 import pw.inz.serializationcenter.payloadgenerator.ysoserialPassThru;
@@ -27,6 +28,8 @@ public class MainController {
     private final WebScanner webScanner;
     private final CodeScanner codeScanner;
 
+    private ClassProbe classProbe;
+
     @Value("${spring.application.name}")
     String appName;
     String desString;
@@ -35,9 +38,13 @@ public class MainController {
     String gadgets;
     String scanResult;
     String StringPayload;
+    String probeResult;
+
+    String clazzes;
 
     @Autowired
     public MainController() {
+        this.classProbe = new ClassProbe();
         codeScanner = new CodeScanner();
         sd = new SerializationDumper();
         ysoserialPass = new ysoserialPassThru();
@@ -65,6 +72,12 @@ AC ED 00 05 73 72 00 0A 53 65 72 69 61 6C 54 65
         return String.valueOf(codeScanner.getProgress());
     }
 
+    @RequestMapping("/statusWeb")
+    @ResponseBody
+    public String getWebStatus(Model model) {
+        return String.valueOf(webScanner.getStatus());
+    }
+
 
     @PostMapping("/codescanner/upload")
     public String handleFileUpload(@RequestParam("file") MultipartFile file,
@@ -82,6 +95,7 @@ AC ED 00 05 73 72 00 0A 53 65 72 69 61 6C 54 65
     public String codeScanner(Model model) {
         model.addAttribute("appName", appName);
         model.addAttribute("gadgets",gadgets);
+        model.addAttribute("clazzes", clazzes);
         return "CodeScanner";
     }
     @RequestMapping("/webscanner.html")
@@ -117,6 +131,35 @@ AC ED 00 05 73 72 00 0A 53 65 72 69 61 6C 54 65
         model.addAttribute("possible_payloads",ysoserialPass.getPayloads());
         model.addAttribute("appName", appName);
         return "PayloadGenerator";
+    }
+
+    @RequestMapping("/classprobe.html")
+    public String classProbe(Model model) {
+        model.addAttribute("appName", appName);
+        model.addAttribute("clazzes",clazzes);
+        return "ClassProbe";
+    }
+
+    @RequestMapping("/classprobe/after")
+    public String classProbeAfter(Model model) {
+        model.addAttribute("appName", appName);
+        model.addAttribute("probeResult", probeResult);
+        return "ClassProbeAfter";
+    }
+
+    @RequestMapping("/classprobe/scan")
+    public String classProbeScan(@RequestParam String url,@RequestParam String request,@RequestParam String clazzes) {
+        this.classProbe = new ClassProbe();
+        probeResult = classProbe.send(url,request,clazzes);
+        System.out.println(probeResult);
+        return  "redirect:/classprobe/after";
+    }
+
+    @RequestMapping("/codescanner/send")
+    public String codeScannerSend() {
+        this.classProbe = new ClassProbe();
+        this.clazzes = classProbe.makeClassList(gadgets);
+        return  "redirect:/classprobe.html";
     }
 
     @PostMapping(path = "/payloadgenerator/generate", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})

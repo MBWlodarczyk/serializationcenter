@@ -30,44 +30,11 @@
         </div>
     </header>
     <main class="px-3">
-        <h1 style="">CodeScanner</h1>
-        <p>This module is responsible for both jar and war files for possible gadget chains.</p>
+        <h1 style="">ClassProbe</h1>
+        <p>This module is responsible checking if java class is available on the remote classpath.</p>
 
-        <script th:inline="javascript">
-            var intervalID
-
-            function start(){
-                document.getElementById("myItem1").style.visibility="visible"
-                intervalID = setInterval(() => {fetch('/status')
-                    .then(response => response.text()).then(data => document.getElementById('myItem1').ldBar.set(parseInt(data)))},1000)
-            }
-            function stop(){
-                clearInterval(intervalID);
-            }
-
-        </script>
-        <div class="row">
-            <div class="col-md-12">
-                <form method="POST" enctype="multipart/form-data" action="/codescanner/upload">
-                    <table style="margin: auto">
-                        <tr><td>File to upload:</td><td><input type="file" name="file" /></td></tr>
-                        <tr><td></td><td><input id="starter" type="submit" value="Upload" th:onclick="start()"/></td></tr>
-                    </table>
-                </form>
-            </div>
-            <div
-                    style="visibility: hidden;margin: auto;width: 50%; height: 7%"
-                    id="myItem1"
-                    class="ldBar label-center"
-                    data-preset="energy"
-            ></div>
-        </div>
-        <div>
-            <div id="gadgets" style="white-space: pre;text-align: left" th:utext="${gadgets}"></div>
-            <form method="POST" enctype="multipart/form-data" action="/codescanner/send">
-                <button class="btn btn-primary my-3" type="submit" name="action" value="edit">Send to ClassProbe</button>
-            </form>
-        </div>
+            <div id="probeResult" style="white-space: pre;text-align: left" th:utext="${probeResult}"></div>
+        <a href="https://google.com" class="button">New request</a>
         <p class="lead"></p>
     </main>
     <footer class="mt-auto text-white-50">
